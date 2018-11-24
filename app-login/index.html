@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>App Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    Hello <b><span id="name"></span></b>, Your username is <b><span id="username"></span></b> <a href="logout">Logout</a>
+    <script>
+        const nameEle = document.getElementById('name');
+        const usernameEle = document.getElementById('username');
+        const token = localStorage.getItem('token');
+        if(!token){
+            location.replace('/login?continue=' + location.href)
+        } else {
+
+            (async() => {
+                const response = await fetch('/api/me', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                })
+                if(response.ok){
+                    const data = await response.json();
+                    usernameEle.innerHTML = data.data.userName;
+                    nameEle.innerHTML = data.data.name
+                    console.log('data', data);
+                }else{
+                    const msg = await response.json();
+                    location.replace('/login?continue=' + location.href)
+                    console.log('msg', msg)
+                }
+            })()
+        }
+
+        window.addEventListener('message', (e) => {
+            const token = localStorage.getItem('token');
+            console.log('got mesage', e.data, e.origin, token);
+            window.parent.postMessage({token}, e.origin);
+        })
+       
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>App Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="client.css" />
+    <script src="client.js"></script>
+</head>
+<body>
+    This is App Notes
+
+    <iframe id="receiver" src="http://myapplogin:3001" width="0" height="0">
+        
+      </iframe>
+
+    <script>
+        setTimeout(() => {
+            const receiverEle = document.getElementById('receiver').contentWindow;
+        receiverEle.postMessage('hello from app note', 'http://myapplogin:3001')
+        }, 3000);
+
+        window.addEventListener('message', (e) => {
+            console.log('msg received from login server', e)
+        })
+        
+        const token = localStorage.getItem('token')
+        // const tokenLogin = new URLSearchParams(location.search).get('token');
+        // if(tokenLogin){
+        //     localStorage.setItem('token', tokenLogin);
+        // }
+        // if(!token){
+        //     location.replace('http://myapplogin:3001/login?continue=' + location.href)
+        // }
+        // (async() =>{
+        //     const response = await fetch('/me', {
+        //     });
+        //     console.log('response', response);
+        // })()
+    </script>
+</body>
+</html>

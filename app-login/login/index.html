@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        textarea:focus, input:focus, button:focus {
+            outline: none;
+        }
+
+        .message{
+            text-align: center;
+        }
+        .title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: underline;
+            padding: 10px;
+        }
+
+        .form {
+            background-color: rgb(221, 221, 221);
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .form-item {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            margin: 10px;
+            grid-column-gap: 10px;
+        }
+
+        .form-label {
+            text-align: end;
+        }
+
+        .form-input {}
+
+        .form-controls {
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid white;
+            background-color: white;
+            text-transform: uppercase;
+            margin-right: 10px;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px grey;
+        }
+
+        .register-link {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">LOGIN</div>
+    <div class="form">
+        <div class="form-item">
+            <div class="form-label">
+                User Name
+            </div>
+            <div class="form-input">
+                <input id="username" />
+            </div>
+        </div>
+        <div class="form-item">
+            <div class="form-label">
+                Password
+            </div>
+            <div class="form-input">
+                <input id="password" />
+            </div>
+        </div>
+        <div class="form-controls">
+            <button onclick="onLogin()">Login</button>
+            <a href="/register" class="register-link">REGISTER</a>
+        </div>
+    </div>
+    <div class="message"></div>
+    
+    <script>
+        const usernameEle = document.getElementById('username');
+        const passwordEle = document.getElementById('password');
+        const messageEle = document.querySelector('.message');
+
+        const continueURL = new URLSearchParams(location.search).get('continue');
+        async function onLogin() {
+            const userName = usernameEle.value;
+            const password = passwordEle.value;
+            if(!userName || !password){
+                console.log('dkkd', messageEle)
+                messageEle.innerHTML = "Please enter username and password";
+                return clearMessageText()
+            }
+            const response = await fetch('/api/login',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userName,
+                    password 
+                })
+            });
+            const data = await response.json();
+            messageEle.innerHTML = data.message;
+            if(response.ok){
+                localStorage.setItem('token', data.token);
+                if(continueURL){
+                    location.replace(continueURL + '?token='+data.token)
+                }else{
+                    location.replace('/')
+                }
+            } else {
+
+            }
+            console.log('response', response, data)
+        }
+
+        function clearMessageText(){
+            setTimeout(() => {
+                messageEle.innerHTML = "";
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
